@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Verifica se o wget está instalado, se não, instala.
+if ! command -v wget &> /dev/null; then
+    echo "wget não encontrado. Instalando..."
+    sudo apt install wget -y
+fi
+
+# Função para exibir o menu
 function menu {
     echo "Escolha uma opção:"
     echo "1. Ativar WireGuard"
@@ -7,6 +14,7 @@ function menu {
     echo "3. Sair"
 }
 
+# Função para ativar o WireGuard
 function ativar_wireguard {
     echo "Configurando limites de arquivos e ajustes adicionais..."
     sudo apt install wireguard resolvconf curl -y
@@ -40,6 +48,7 @@ EOF
     echo "WireGuard ativado."
 }
 
+# Função para desativar o WireGuard
 function desativar_wireguard {
     echo "Desativando WireGuard..."
     sudo wg-quick down wg0
@@ -55,6 +64,19 @@ function desativar_wireguard {
     echo "WireGuard desativado."
 }
 
+# Função para criar o comando weriguard
+function criar_comando {
+    echo "Criando comando 'weriguard'..."
+    echo "#!/bin/bash" > /usr/local/bin/weriguard
+    echo "bash <(wget -qO- https://raw.githubusercontent.com/Lockednet/WireGuard/main/Weriguard.sh)" >> /usr/local/bin/weriguard
+    chmod +x /usr/local/bin/weriguard
+    echo "Comando 'weriguard' criado com sucesso."
+}
+
+# Chama a função para criar o comando
+criar_comando
+
+# Loop para exibir o menu
 while true; do
     menu
     read -p "Digite sua opção: " opcao
